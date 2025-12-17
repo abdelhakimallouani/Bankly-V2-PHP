@@ -11,7 +11,7 @@
 <body class="min-h-screen bg-gradient-to-r from-[#0055FF] to-[#002368] flex flex-col">
 
     <header class="p-2">
-        <a href=""><img src="img/Logo.png" alt="" class="h-[150px] relative left-10"></a>
+        <a href=""><img src="image/Logo.png" alt="" class="h-[150px] relative left-10"></a>
     </header>
 
     <div class="text-center text-white mb-10">
@@ -49,7 +49,7 @@
                         class="text-[#00FFFF] hover:underline font-bold">SignUp</a>" .</p>
             </form>
         </section>
-        <img src="img/image.png" alt="" class="h-[500px] w-[600px] absolute bottom-0 right-0 ">
+        <img src="image/image.png" alt="" class="h-[500px] w-[600px] absolute bottom-0 right-0 ">
 
     </div>
 

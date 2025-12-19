@@ -50,7 +50,7 @@ if (!isset($_SESSION['id_user'])) {
             </div>
         </div>
         <div class="border-t border-gray-200 pt-2">
-            <a href="../auth/logout.php" class="w-full hover:bg-[#ff000051] hover:text-[#FF0000] text-[#E0E0E0] rounded-lg text-center cursor-pointer">
+            <a href="../auth/logout.php" class="flex items-center space-x-3 text-[#E0E0E0] hover:bg-[#ff000051] hover:text-[#FF0000] rounded-lg p-2 cursor-pointer ">
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
                 <span>Déconnexion</span>
     
@@ -122,7 +122,7 @@ if (!isset($_SESSION['id_user'])) {
         <div >
             <table class="w-full">
                 <thead>
-                    <tr class="border-b border-[#D9D9DA] p ">
+                    <tr class="border-b border-[#D9D9DA] ">
                         <th class="text-left py-3 px-4 text-[#65758B] font-medium">Type</th>
                         <th class="text-left py-3 px-4 text-[#65758B] font-medium">Compte</th>
                         <th class="text-left py-3 px-4 text-[#65758B] font-medium">Montant</th>

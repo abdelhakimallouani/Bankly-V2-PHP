@@ -6,7 +6,6 @@ if (!isset($_SESSION['id_user'])) {
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,14 +133,14 @@ if (!isset($_SESSION['id_user'])) {
                 <tbody>
                     <tr class="border-b border-[#D9D9DA]">
                         <td class="py-4 px-4 inline-flex items-center px-3 py-1 rounded-full text-[#13DD00]">Depot</td>
-                        <td class="py-3 px-3 text-gray-700 font-medium">BNK-2025-001</td>
+                        <td class="py-3 px-3 text-gray-700 ">BNK-2025-001</td>
                         <td class="py-3 px-3 text-[#13DD00] ">+500,00 DH</td>
                         <td class="py-3 px-3 text-gray-600">virement salaire</td>
                         <td class="py-3 px-3 text-[#65758B]">07 dec.2025, 17:46</td>
                     </tr>
                     <tr class="border-b border-[#D9D9DA]">
                         <td class="py-4 px-4 inline-flex items-center px-3 py-1 rounded-full text-[#FF0000] ">Retrait</td>
-                        <td class="py-4 px-4 text-gray-700 font-medium">BNK-2025-001</td>
+                        <td class="py-4 px-4 text-gray-700 ">BNK-2025-001</td>
                         <td class="py-4 px-4 text-[#FF0000]">-100,00 DH</td>
                         <td class="py-4 px-4 text-gray-600">Retrait de jour</td>
                         <td class="py-4 px-4 text-[#65758B]">07 dec.2025, 17:46</td>

@@ -7,7 +7,11 @@ if (!isset($_SESSION['id_user'])) {
     exit;
 }
 
-$sql = "SELECT * FROM client ORDER BY create_date DESC";
+$sql = "SELECT client.*, COUNT(compte.id_compte) AS nb_comptes
+    FROM client
+    LEFT JOIN compte ON client.id_client = compte.id_client
+    GROUP BY client.id_client
+    ORDER BY client.create_date DESC";
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -124,7 +128,7 @@ if (!$result) {
                                 </td>
 
                                 <td class="py-3 px-4 text-[#0055FF]">
-                                    0 Comptes
+                                    <?php echo $row['nb_comptes'] . " Comptes"; ?>
                                 </td>
 
                                 <td class="py-3 px-4 text-[#65758B]">

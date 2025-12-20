@@ -1,10 +1,20 @@
 <?php
 session_start();
+require_once '../config/config.php';
 
 if (!isset($_SESSION['id_user'])) {
     header("Location: ../auth/login.php");
     exit;
 }
+
+$sql = "SELECT * FROM client ORDER BY create_date DESC";
+$result = mysqli_query($conn, $sql);
+
+if (!$result) {
+    die("query failed : " . mysqli_error($conn));
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -45,8 +55,8 @@ if (!isset($_SESSION['id_user'])) {
         </div>
 
         <div class="border-t border-gray-200 pt-2">
-            <div class="flex items-center space-x-3 mb-2">
-                <div class="text-[#E0E0E0] hover:bg-[#ffffff3d] rounded-lg">
+            <div class="flex items-center space-x-3 mb-2 ">
+                <div class="text-[#E0E0E0] hover:bg-[#ffffff3d] rounded-lg cursor-pointer w-full p-2 ">
                     <h4 class="font-bold text-[#E0E0E0]"><?php echo htmlspecialchars($_SESSION['nom_complet']); ?></h4>
                     <p class="text-sm text-[#E0E0E0]"><?php echo htmlspecialchars($_SESSION['email']); ?></p>
                 </div>
@@ -68,19 +78,19 @@ if (!isset($_SESSION['id_user'])) {
                 <h2 class="text-3xl font-bold text-[#0F1729] mb-3">Clients</h2>
                 <p class="text-[#65758B]">Gérez les informations de vos clients</p>
             </div>
-            <button class="bg-[#0F1729] hover:bg-[#0f1729df] text-white font-medium py-3 px-5 rounded-lg flex items-center space-x-2 cursor-pointer">
+            <button onclick="openModal()" class="bg-[#0F1729] hover:bg-[#0f1729df] text-white font-medium py-3 px-5 rounded-lg flex items-center space-x-2 cursor-pointer">
                 <i class="fas fa-plus"></i>
                 <span>Nouveau client</span></button>
         </div>
-         <div class="mb-8">
+        <div class="mb-8">
             <div class="relative ">
-                <input type="text" 
-                       placeholder="Rechercher par nom, email ou CIN..." 
-                       class="w-full pl-12 pr-3 py-2 border border-[#D9D9DA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#012a7d75] focus:border-transparent text-[#0F1729]">
+                <input type="text"
+                    placeholder="Rechercher par nom, email ou CIN..."
+                    class="w-full pl-12 pr-3 py-2 border border-[#D9D9DA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
                 <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-[#65758B]"></i>
             </div>
         </div>
-        <div  class="bg-white rounded-xl shadow-sm border border-[#D9D9DA] mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-[#D9D9DA] mb-8">
             <table class="w-full">
                 <thead>
                     <tr class="border-b border-[#D9D9DA]">
@@ -92,37 +102,146 @@ if (!isset($_SESSION['id_user'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b border-[#D9D9DA]">
-                        <td class="py-4 px-4 inline-flex items-center px-3 py-1 rounded-full">
-                            <div>
-                                <p class=" text-[#0F1729]">youness arroubi</p>
-                                <p class=" text-[#65758B]">younessarroubi@gmail.com</p>
-                            </div>
-                        </td>
-                        <td class=" text-left py-3 px-3 text-[#65758B] ">AB00001</td>
-                        <td class="text-left py-3 px-3 text-[#0055FF]">0 Comptes</td>
-                        <td class="text-left py-3 px-3 text-[#65758B]">virement salaire</td>
-                        <td class="text-left py-3 px-3 text-[#65758B]">15/01/2025</td>
-                        <td class="py-4 ">
-                                <div class="flex items-center space-x-5">
-                                    <button class="text-[#0F1729] cursor-pointer">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                    <button class="text-[#65758B] cursor-pointer">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <button class="text-[#FF0000] ursor-pointer">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </div>
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr class="border-b border-[#D9D9DA]">
+
+                                <td class="py-4 px-4">
+                                    <p class="text-[#0F1729] font-medium">
+                                        <?php echo htmlspecialchars($row['prenom'] . " " . $row['nom']); ?>
+                                    </p>
+                                    <p class="text-[#65758B] text-sm">
+                                        <?php echo htmlspecialchars($row['email']); ?>
+                                    </p>
+                                </td>
+
+                                <td class="py-3 px-4 text-[#65758B]">
+                                    <?php echo htmlspecialchars($row['CIN']); ?>
+                                </td>
+
+                                <td class="py-3 px-4 text-[#65758B]">
+                                    <?php echo htmlspecialchars($row['telephone']); ?>
+                                </td>
+
+                                <td class="py-3 px-4 text-[#0055FF]">
+                                    0 Comptes
+                                </td>
+
+                                <td class="py-3 px-4 text-[#65758B]">
+                                    <?php echo date("d/m/Y", strtotime($row['create_date'])); ?>
+                                </td>
+
+                                <td class="py-3">
+                                    <div class="flex items-center space-x-4">
+                                        <a href="" class="text-[#0F1729] cursor-pointer">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+
+                                        <a href="" class="text-[#65758B] cursor-pointer">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        <a href="" class="text-[#FF0000] cursor-pointer">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        <?php endwhile; ?>
+
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center py-6 text-[#65758B] ">
+                                Aucun client trouve
                             </td>
-                    </tr>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
+
             </table>
         </div>
 
+        <!-- modal ajouter client  -->
+        <div id="clientModal"
+            class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
+
+            <div class="bg-white w-full max-w-xl rounded-xl shadow-lg p-8 relative">
+
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Nouveau client</h2>
+                    <button onclick="closeModal()" class="text-[#65758B] text-2xl cursor-pointer">X</button>
+                </div>
+
+                <form action="add_client.php" method="POST" class="space-y-4">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class=" text-[#65758B]">Prénom</label>
+                            <input type="text" name="prenom"
+                                class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                        </div>
+
+                        <div>
+                            <label class=" text-[#65758B]">Nom</label>
+                            <input type="text" name="nom"
+                                class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class=" text-[#65758B]">Gmail</label>
+                        <input type="email" name="email"
+                            class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class=" text-[#65758B]">CIN</label>
+                            <input type="text" name="CIN"
+                                class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                        </div>
+
+                        <div>
+                            <label class=" text-[#65758B]">Téléphone</label>
+                            <input type="text" name="telephone"
+                                class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class=" text-[#65758B]">Adresse</label>
+                        <input type="text" name="adresse"
+                            class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                    </div>
+
+                    <div class="flex justify-end gap-4 pt-4">
+                        <button type="button" onclick="closeModal()"
+                            class="px-6 py-2 border border-[#D9D9DA] rounded-lg text-[#65758B] hover:bg-gray-100 cursor-pointer">
+                            Annuler
+                        </button>
+
+                        <button type="submit" name="add_client"
+                            class=" px-6 py-2 bg-[#0F1729] text-white rounded-lg hover:bg-[#0f1729df] cursor-pointer">
+                            Creer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
 
     </section>
+    <script>
+        function openModal() {
+            document.getElementById('clientModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('clientModal').classList.add('hidden');
+        }
+    </script>
 
 </body>
 

@@ -141,11 +141,11 @@ if (!$result) {
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
 
-                                        <a href="" class="text-[#65758B] cursor-pointer">
+                                        <a href="edit_client.php" class="text-[#65758B] cursor-pointer">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
 
-                                        <a href="" class="text-[#FF0000] cursor-pointer">
+                                        <a href="delete_client.php?id=<?php echo $row['id_client']; ?>" class="text-[#FF0000] cursor-pointer">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>
                                     </div>

@@ -24,7 +24,7 @@ if (!isset($_SESSION['id_user'])) {
     </div>
     
     <div class="flex-1">
-        <a href="../dashboard/dashboard.php" class="flex items-center space-x-3 text-[#E0E0E0] hover:bg-[#ffffff3d] focus:bg-[#ffffff3b] rounded-lg p-3 mb-2 cursor-pointer">
+        <a href="../dashboard/dashboard.php" class="flex items-center space-x-3 text-[#E0E0E0] hover:bg-[#ffffff3d] bg-[#ffffff3b] rounded-lg p-3 mb-2 cursor-pointer">
             <i class="fas fa-chart-bar"></i>
             <span>Tableau de bord</span>
         </a>

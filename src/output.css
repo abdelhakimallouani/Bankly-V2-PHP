@@ -205,6 +205,17 @@
   }
 }
 @layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
   .absolute {
     position: absolute;
   }
@@ -454,6 +465,9 @@
   .border-gray-200 {
     border-color: var(--color-gray-200);
   }
+  .bg-\[\#0F172\] {
+    background-color: #0F172;
+  }
   .bg-\[\#0F1729\] {
     background-color: #0F1729;
   }
@@ -480,6 +494,12 @@
   }
   .bg-\[\#ffff\] {
     background-color: #ffff;
+  }
+  .bg-\[\#ffffff3b\] {
+    background-color: #ffffff3b;
+  }
+  .bg-\[\#ffffff3d\] {
+    background-color: #ffffff3d;
   }
   .bg-black {
     background-color: var(--color-black);
@@ -697,6 +717,21 @@
     --tw-outline-style: none;
     outline-style: none;
   }
+  .peer-checked\:bg-\[\#13DD00\] {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: #13DD00;
+    }
+  }
+  .peer-checked\:bg-\[\#FF0000\] {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: #FF0000;
+    }
+  }
+  .peer-checked\:text-white {
+    &:is(:where(.peer):checked ~ *) {
+      color: var(--color-white);
+    }
+  }
   .hover\:bg-\[\#0f1729df\] {
     &:hover {
       @media (hover: hover) {
@@ -704,10 +739,24 @@
       }
     }
   }
+  .hover\:bg-\[\#13DD00\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #13DD00;
+      }
+    }
+  }
   .hover\:bg-\[\#0050ef\] {
     &:hover {
       @media (hover: hover) {
         background-color: #0050ef;
+      }
+    }
+  }
+  .hover\:bg-\[\#FF0000\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #FF0000;
       }
     }
   }
@@ -739,11 +788,28 @@
       }
     }
   }
+  .hover\:text-white {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-white);
+      }
+    }
+  }
   .hover\:underline {
     &:hover {
       @media (hover: hover) {
         text-decoration-line: underline;
       }
+    }
+  }
+  .focus\:bg-\[\#13DD00\] {
+    &:focus {
+      background-color: #13DD00;
+    }
+  }
+  .focus\:bg-\[\#FF0000\] {
+    &:focus {
+      background-color: #FF0000;
     }
   }
   .focus\:bg-\[\#ffffff3b\] {
@@ -754,6 +820,11 @@
   .focus\:bg-\[\#ffffff3d\] {
     &:focus {
       background-color: #ffffff3d;
+    }
+  }
+  .focus\:text-white {
+    &:focus {
+      color: var(--color-white);
     }
   }
   .focus\:ring-2 {

@@ -7,7 +7,7 @@ if (!isset($_SESSION['id_user'])) {
     exit;
 }
 
-$sql = "SELECT compte.id_compte, compte.type, compte.solde, compte.statut, compte.create_date, client.nom, client.prenom, client.CIN
+$sql = "SELECT compte.id_compte, compte.type, compte.solde, compte.statut, compte.create_date, compte.id_client, client.nom, client.prenom, client.CIN
 FROM compte
 JOIN client ON compte.id_client = client.id_client
 ORDER BY compte.create_date DESC";
@@ -17,9 +17,7 @@ $result = mysqli_query($conn, $sql);
 if (!$result) {
     die("query failed : " . mysqli_error($conn));
 }
-?>
 
-<?php
 $clients_sql = "SELECT id_client, nom, prenom, CIN FROM client ORDER BY nom ASC";
 $clients_result = mysqli_query($conn, $clients_sql);
 
@@ -27,7 +25,6 @@ if (!$clients_result) {
     die("Erreur clients: " . mysqli_error($conn));
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +74,6 @@ if (!$clients_result) {
                 <a href="../auth/logout.php" class="flex items-center space-x-3 text-[#E0E0E0] hover:bg-[#ff000051] hover:text-[#FF0000] rounded-lg p-2 cursor-pointer">
                     <i class="fa fa-sign-out" aria-hidden="true"></i>
                     <span>Deconnexion</span>
-
                 </a>
             </div>
         </div>
@@ -90,18 +86,21 @@ if (!$clients_result) {
                 <h2 class="text-3xl font-bold text-[#0F1729] mb-3">Comptes</h2>
                 <p class="text-[#65758B]">Gerez les comptes bancaires de vos clients</p>
             </div>
-            <button onclick="openModal()" class="bg-[#0F1729] hover:bg-[#0f1729df] text-white font-medium py-3 px-5 rounded-lg flex items-center space-x-2 cursor-pointer">
+            <button onclick="openAddModal()" class="bg-[#0F1729] hover:bg-[#0f1729df] text-white font-medium py-3 px-5 rounded-lg flex items-center space-x-2 cursor-pointer">
                 <i class="fas fa-plus"></i>
-                <span>Nouveau compte</span></button>
+                <span>Nouveau compte</span>
+            </button>
         </div>
+
         <div class="mb-8">
-            <div class="relative ">
+            <div class="relative">
                 <input type="text"
                     placeholder="Rechercher par numero ou client..."
-                    class="w-full pl-12 pr-3 py-2 border border-[#D9D9DA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#012a7d75] ">
+                    class="w-full pl-12 pr-3 py-2 border border-[#D9D9DA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
                 <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-[#65758B]"></i>
             </div>
         </div>
+
         <div class="bg-white rounded-xl shadow-sm border border-[#D9D9DA] mb-8">
             <table class="w-full">
                 <thead>
@@ -112,136 +111,114 @@ if (!$clients_result) {
                         <th class="text-left py-3 px-4 text-[#65758B] font-medium">Solde</th>
                         <th class="text-left py-3 px-4 text-[#65758B] font-medium">Statut</th>
                         <th class="text-left py-3 px-4 text-[#65758B] font-medium">Date creation</th>
+                        <th class="text-left py-3 px-4 text-[#65758B] font-medium">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr class="border-b border-[#D9D9DA]">
-
                                 <td class="py-4 px-4 text-[#0F1729] font-medium">
                                     <?php echo "BNK-" . $row['id_compte']; ?>
                                 </td>
-
                                 <td class="py-3 px-4 text-[#65758B]">
                                     <?php echo htmlspecialchars($row['nom'] . " " . $row['prenom']); ?>
                                 </td>
-
                                 <td class="py-3 px-4 text-[#65758B] capitalize">
                                     <?php echo htmlspecialchars($row['type']); ?>
                                 </td>
-
                                 <td class="py-3 px-4 text-[#65758B]">
-                                    <?php echo $row['solde'] . " DH"; ?>
+                                    <?= $row['solde'] . " DH"; ?>
                                 </td>
-
                                 <td class="py-3 px-4">
                                     <?php if ($row['statut'] === 'actif'): ?>
-                                        <span class="text-[#13DD00] ">
-                                            Actif
-                                        </span>
+                                        <span class="text-[#13DD00]">Actif</span>
                                     <?php else: ?>
-                                        <span class="text-[#FF0000]">
-                                            Bloque
-                                        </span>
+                                        <span class="text-[#FF0000]">Bloque</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 px-4 text-[#65758B]">
                                     <?php echo date('d/m/Y', strtotime($row['create_date'])); ?>
                                 </td>
-
-                                <td class="py-3">
+                                <td class="py-3 px-4">
                                     <div class="flex items-center space-x-4">
-
-                                        <a href="edit_account.php?id=<?php echo $row['id_compte']; ?>" class="text-[#65758B] cursor-pointer">
+                                        <button onclick='openEditModal(<?php echo json_encode($row); ?>)' class="text-[#65758B] cursor-pointer">
                                             <i class="fa-solid fa-pen"></i>
-                                        </a>
-
-                                        <a href="delete_account.php?id=<?php echo $row['id_compte']; ?>" class="text-[#FF0000] cursor-pointer">
+                                        </button>
+                                        <a href="delete_account.php?id=<?php echo $row['id_compte']; ?>" class="text-[#FF0000] cursor-pointer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>
                                     </div>
                                 </td>
-
                             </tr>
                         <?php endwhile; ?>
-
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="text-center py-6 text-[#65758B] ">
-                                Aucun Comptes trouve
+                            <td colspan="7" class="text-center py-6 text-[#65758B]">
+                                Aucun compte trouve
                             </td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
-
             </table>
         </div>
 
-        <!-- modal ajouter account  -->
-        <div id="clientModal"
-            class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
-
+        <!-- Modal Ajouter Compte -->
+        <div id="addAccountModal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
             <div class="bg-white w-full max-w-xl rounded-xl shadow-lg p-8 relative">
-
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold">Nouveau compte</h2>
-                    <button onclick="closeModal()" class="text-[#65758B] text-2xl cursor-pointer">X</button>
+                    <button onclick="closeAddModal()" class="text-[#65758B] text-2xl cursor-pointer">×</button>
                 </div>
 
                 <form action="add_account.php" method="POST" class="space-y-4">
-
                     <div>
-
                         <label class="text-[#65758B]">Client</label>
-
                         <select name="client" required
-                            class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg py-2 focus:outline-none">
+                            class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
                             <option value="">Selectionner un client</option>
-                            <?php while ($client = mysqli_fetch_assoc($clients_result)): ?>
+                            <?php 
+                            mysqli_data_seek($clients_result, 0);
+                            while ($client = mysqli_fetch_assoc($clients_result)): 
+                            ?>
                                 <option value="<?php echo $client['id_client']; ?>">
                                     <?php echo htmlspecialchars($client['nom'] . " " . $client['prenom'] . " (" . $client['CIN'] . ")"); ?>
                                 </option>
                             <?php endwhile; ?>
                         </select>
-
                     </div>
 
                     <div>
-                        <label class=" text-[#65758B]">Type de compte</label>
-                        <select name="type" id="" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none  ">
-                            <option value="" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none ">Selectionner un type</option>
-                            <option value="courant" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none ">courant</option>
-                            <option value="epargne" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none ">epargne</option>
+                        <label class="text-[#65758B]">Type de compte</label>
+                        <select name="type" required class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
+                            <option value="">Selectionner un type</option>
+                            <option value="courant">Courant</option>
+                            <option value="epargne">epargne</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class=" text-[#65758B]">Solde initial (DH)</label>
-                        <input type="number" name="solde" required
+                        <label class="text-[#65758B]">Solde initial (DH)</label>
+                        <input type="number" name="solde" step="0.01" required
                             class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
-
-
                     </div>
 
                     <div>
-                        <label class=" text-[#65758B]">Statut</label>
-                        <select name="statut" id="" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none  ">
-                            <option value="" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none ">Selectionner un type</option>
-                            <option value="actif" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none ">actif</option>
-                            <option value="bloque" class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none ">bloque</option>
+                        <label class="text-[#65758B]">Statut</label>
+                        <select name="statut" required class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
+                            <option value="">Selectionner un statut</option>
+                            <option value="actif">Actif</option>
+                            <option value="bloque">Bloque</option>
                         </select>
-
                     </div>
 
                     <div class="flex justify-end gap-4 pt-4">
-                        <button type="button" onclick="closeModal()"
+                        <button type="button" onclick="closeAddModal()"
                             class="px-6 py-2 border border-[#D9D9DA] rounded-lg text-[#65758B] hover:bg-gray-100 cursor-pointer">
                             Annuler
                         </button>
-
                         <button type="submit" name="add_account"
-                            class=" px-6 py-2 bg-[#0F1729] text-white rounded-lg hover:bg-[#0f1729df] cursor-pointer">
+                            class="px-6 py-2 bg-[#0F1729] text-white rounded-lg hover:bg-[#0f1729df] cursor-pointer">
                             Creer
                         </button>
                     </div>
@@ -249,16 +226,103 @@ if (!$clients_result) {
             </div>
         </div>
 
+        <!-- Modal Modifier Compte -->
+        <div id="editAccountModal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
+            <div class="bg-white w-full max-w-xl rounded-xl shadow-lg p-8 relative">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Modifier le compte</h2>
+                    <button onclick="closeEditModal()" class="text-[#65758B] text-2xl cursor-pointer">×</button>
+                </div>
 
+                <form action="edit_account.php" method="POST" class="space-y-4">
+                    <input type="hidden" name="id_compte" id="edit_id_compte">
+
+                    <div>
+                        <label class="text-[#65758B]">Numero de compte</label>
+                        <input type="text" id="edit_numero_compte" readonly
+                            class="w-full bg-gray-100 border border-[#D9D9DA] rounded-lg px-4 py-2 text-[#65758B]">
+                    </div>
+
+                    <div>
+                        <label class="text-[#65758B]">Client</label>
+                        <select name="id_client" id="edit_id_client" required
+                            class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
+                            <option value="">Selectionner un client</option>
+                            <?php 
+                            mysqli_data_seek($clients_result, 0);
+                            while ($client = mysqli_fetch_assoc($clients_result)): 
+                            ?>
+                                <option value="<?php echo $client['id_client']; ?>">
+                                    <?php echo htmlspecialchars($client['nom'] . " " . $client['prenom'] . " (" . $client['CIN'] . ")"); ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-[#65758B]">Type de compte</label>
+                        <select name="type" id="edit_type" required
+                            class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
+                            <option value="">Selectionner un type</option>
+                            <option value="courant">Courant</option>
+                            <option value="epargne">epargne</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-[#65758B]">Solde (DH)</label>
+                        <input type="number" name="solde" id="edit_solde" step="0.01" required
+                            class="w-full border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
+                    </div>
+
+                    <div>
+                        <label class="text-[#65758B]">Statut</label>
+                        <select name="statut" id="edit_statut" required
+                            class="w-full text-[#65758B] border border-[#D9D9DA] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#012a7d75]">
+                            <option value="">Selectionner un statut</option>
+                            <option value="actif">Actif</option>
+                            <option value="bloque">Bloque</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-4 pt-4">
+                        <button type="button" onclick="closeEditModal()"
+                            class="px-6 py-2 border border-[#D9D9DA] rounded-lg text-[#65758B] hover:bg-gray-100 cursor-pointer">
+                            Annuler
+                        </button>
+                        <button type="submit" name="update_account"
+                            class="px-6 py-2 bg-[#0F1729] text-white rounded-lg hover:bg-[#0f1729df] cursor-pointer">
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
     </section>
+
     <script>
-        function openModal() {
-            document.getElementById('clientModal').classList.remove('hidden');
+        // Modal Ajouter Compte
+        function openAddModal() {
+            document.getElementById('addAccountModal').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('clientModal').classList.add('hidden');
+        function closeAddModal() {
+            document.getElementById('addAccountModal').classList.add('hidden');
+        }
+
+        function openEditModal(account) {
+            document.getElementById('edit_id_compte').value = account.id_compte;
+            document.getElementById('edit_numero_compte').value = 'BNK-' + account.id_compte;
+            document.getElementById('edit_id_client').value = account.id_client;
+            document.getElementById('edit_type').value = account.type;
+            document.getElementById('edit_solde').value = account.solde;
+            document.getElementById('edit_statut').value = account.statut;
+            document.getElementById('editAccountModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editAccountModal').classList.add('hidden');
         }
     </script>
 

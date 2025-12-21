@@ -141,7 +141,7 @@ if (!$result) {
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
 
-                                        <a href="edit_client.php" class="text-[#65758B] cursor-pointer">
+                                        <a href="edit_client.php?id=<?php echo $row['id_client']; ?>" class="text-[#65758B] cursor-pointer">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
 

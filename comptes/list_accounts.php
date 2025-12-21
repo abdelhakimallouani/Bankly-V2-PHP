@@ -153,11 +153,11 @@ if (!$clients_result) {
                                 <td class="py-3">
                                     <div class="flex items-center space-x-4">
 
-                                        <a href="" class="text-[#65758B] cursor-pointer">
+                                        <a href="edit_account.php?id=<?php echo $row['id_compte']; ?>" class="text-[#65758B] cursor-pointer">
                                             <i class="fa-solid fa-pen"></i>
                                         </a>
 
-                                        <a href="" class="text-[#FF0000] cursor-pointer">
+                                        <a href="delete_account.php?id=<?php echo $row['id_compte']; ?>" class="text-[#FF0000] cursor-pointer">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>
                                     </div>
